@@ -1,0 +1,54 @@
+== List your Environments
+
+//'''
+//
+//title: List your Environments
+//type: single
+//url: "/saas/start/list-environments/"
+//weight: 35
+//menu:
+//  saas:
+//    parent: "start"
+//    identifier: "list-environments"
+//
+//'''
+
+An environment is a logical grouping of hosts. Examples include a Kubernetes cluster or a set of instances that supports the execution of your application workload. 
+This definition is needed because the scope of an environment is different for every organization. 
+For example, a product group could have its own environment divided into development, test, and production. A larger organization could use separate environments for each product group in a division. Another approach is to simply classify environments as production or non-production leading to two large environments shared across the organization.
+In terms of security, it is important to list all the environments where the application workloads run and to map their orchestrators or operational systems.
+You can do this mapping using a spreadsheet that lists all the hosts and orchestrators that your applications use with their respective versions. With this map, you can start planning the coverage of your enforcers. 
+
+The following example shows how to map your hosts and orchestrators to plan the coverage of your enforcers:
+
+[cols="1,1", options="header"]
+|===
+|Host or Orchestrator | Version | Enforcer Supported?
+
+|Openshift
+|4.6
+|Yes
+
+|Google Kubernetes Engine
+|1.18
+|Yes
+
+|Ubuntu 18.04
+|18 LTS
+|Yes
+
+|Windows Server
+|2019
+|Yes
+
+|Windows Server
+|2008
+|No
+
+|AWS RDS
+|-
+|No
+|===
+
+Using this approach, you can determine what resources your Enforcers cover and are considered processing units. 
+It also helps you determine the resources your Enforcers won't cover and that must be leveraged as network lists.
