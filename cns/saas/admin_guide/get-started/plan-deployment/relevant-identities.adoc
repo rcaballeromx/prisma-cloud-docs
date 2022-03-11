@@ -1,0 +1,37 @@
+== Use Relevant Identities
+
+The Prisma Cloud Microsegmentation module automatically learns all the metadata for the protected resources.
+
+* Cloud account
+* Service
+* Region
+* Operating system
+* Resource name
+* Platform
+
+Enforcers use that metadata to automatically create identities with the `@org` tags. 
+The best practice is to use these identities to map your resources because they are easy to understand.
+These identities can map your Prisma Cloud Microsegmentation namespaces, platforms, operational systems, images, and Kubernetes namespaces.
+
+Figure 1 - Application/Cloud Identity information (automatically discovered)
+
+If you use custom defined identities, align the difined identities with the teams managing the cloud resources.
+For example, DevOps, SRE, or Cloud Administrators.
+That way those teams can ensure these custom identities are added to the resources in their pipeline. Follow the best practices for custom identities.
+
+* Keep custom identities easy to understand.
+* Use custom identities that make sense from a business or security perspective.
+
+Some examples of custom identities that follow these best practices are:
+* `app=payment`
+* `role=frontend`
+* `environment=prod`
+* `pci=yes`
+
+
+The following example shows custom identities retrieved from a resource.
+				
+Figure 2 - Custom Identity information
+
+Custom identities are leveraged by resources below them in the deployment's hierarchy.
+To allow all rulesets across the child namespaces to leverage these custom identities, the best practice is to create them as high as possible in the namespace hierarchy.
