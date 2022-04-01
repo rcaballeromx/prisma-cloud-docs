@@ -1,0 +1,195 @@
+== Namespace Creation
+
+//'''
+//
+//title: Namespace Creation
+//type: single
+//url: "/saas/start/create-ns/"
+//weight: 35
+//menu:
+//  saas:
+//    parent: "start"
+//    identifier: "create-ns"
+//canonical: https://docs.aporeto.com/saas/start/create-ns/
+//aliases: [
+//  "/saas/setup/namespaces/"
+//]
+//
+//'''
+
+Your Prisma Cloud ID represent the parent namespace of your deployment.
+It is  eighteen characters in length and uses onlyh integers, for example: `826920578209172635`.
+Each cloud account that you onboard to Prisma Cloud has a child namespace.
+These child namespaces use the name of your cloud account and its ID, for example: `/aws-dev-826088932159`.
+
+Manually create child namespaces in the following cases.
+
+* You have cloud accounts that you did not onboard to Prisma Cloud.
+* You host your own infrastructure or have on-premise workloads.
+
+If you need to create children namespaces, create grandchildren namespaces before deploying your enforcers.
+After an Enforcer registers in a namespace, you can't move it to another namespace.
+To switch an Enforcer to a different namespace, uninstall and reinstall the enforcer.
+
+image::create_microseg_ns.png[width=800]
+
+Each Kubernetes or OpenShift cluster must have one grandchild namespace.
+Do not deploy multiple Kubernetes or OpenShift clusters in a single Microsegmentation namespace.
+For the virtual machines, create one namespace per host, or deploy them together as needed.
+
+[TIP]
+====
+To learn more about namespaces, review the xref:../concepts/namespaces.adoc[basic Microsegmentation namespace concepts].
+====
+
+[.task]
+=== Create the Namespaces
+
+You can create the children namespaces using the Prisma Cloud Console user interface.
+If you don't have access to the Prisma Cloud Console, you can use this task to create the needed namespaces with the `apoctl` command-line interface.
+
+==== Prerequisites
+
+* Have *namespace editor* permissions in the parent namespace.
+* Install the `apoctl` command-line interface to create the needed namespaces.
+
+[.procedure]
+==== Set your Environment Variables
+
+. Copy your parent namespace from the web interface, as shown below.
++
+image::copy-parent-ns.gif[Copy tenant namespace]
+
+. Set a `PARENT` environment variable and paste in the value you copied.
++
+[,console,subs="+attributes"]
+----
+export PARENT=/{parent-ns}
+----
+
+. If children namespaces already exist in your deployment, create `CHILD` environment variables with their names.
+For example, the following command creates the needed environment variables for the `{child-ns}` and `{child-ns-2}` namespaces.
++
+[,console,subs="+attributes"]
+----
+export CHILD1={child-ns}
+export CHILD2={child-ns-2}
+----
+
+[.procedure]
+=== Create Child Namespaces
+
+. Set the `CHILD` environment variables with the names of the children namespaces.
++
+[,console]
+----
+export CHILD3=my-private-cloud
+export CHILD4=bare-metal-infra
+----
+
+. Create the first child namespace.
++
+[,console]
+----
+cat <<EOF | apoctl api create namespace -n $PARENT -f -
+name: $CHILD3
+type: CloudAccount
+defaultPUIncomingTrafficAction: Allow
+defaultPUOutgoingTrafficAction: Allow
+EOF
+----
+
+. Repeat to create all the needed children namespaces. For example, create the second child namespace.
++
+[,console]
+----
+cat <<EOF | apoctl api create namespace -n $PARENT -f -
+name: $CHILD4
+type: CloudAccount
+defaultPUIncomingTrafficAction: Allow
+defaultPUOutgoingTrafficAction: Allow
+EOF
+----
+. Confirm the creation of the namespaces.
++
+[,console]
+----
+apoctl api list namespace -n $PARENT --output yaml
+----
+
+[.procedure]
+==== Create Grandchild Namespaces
+
+. Create the environment variables with the names of the grandchild namespaces.
++
+[,console]
+----
+export GRANDCHILD1=k8s
+export GRANDCHILD2=vm
+----
+
+. Create the first grandchild namespace in the `{child-ns}` namespace stored in the `$CHILD1` environment variable.
++
+[,console]
+----
+cat <<EOF | apoctl api create namespace -n $PARENT/$CHILD1 -f -
+name: $GRANDCHILD1
+type: Group
+defaultPUIncomingTrafficAction: Allow
+defaultPUOutgoingTrafficAction: Allow
+EOF
+----
+
+. Repeat to create all the needed grandchild namespaces in the `{child-ns}` namespace.
+For example, create the second grandchild namespace in the `{child-ns}` namespace stored in the `$CHILD1` environment variable.
++
+[,console]
+----
+cat <<EOF | apoctl api create namespace -n $PARENT/$CHILD1 -f -
+name: $GRANDCHILD2
+type: Group
+defaultPUIncomingTrafficAction: Allow
+defaultPUOutgoingTrafficAction: Allow
+EOF
+----
+
+. Confirm the creation
++
+[,console]
+----
+apoctl api list namespace -n $PARENT/$CHILD1 --output yaml
+----
+
+. You need to create all the needed grandchild namepaces in the appropriate child namespace. 
+For example, create a grandchild namespace in the `{child-ns-2}` child namespace.
++
+[,console]
+----
+cat <<EOF | apoctl api create namespace -n $PARENT/$CHILD2 -f -
+name: $GRANDCHILD1
+type: Group
+defaultPUIncomingTrafficAction: Allow
+defaultPUOutgoingTrafficAction: Allow
+EOF
+----
+
+. Repeat to create all the needed grandchild namespaces in the `{child-ns-2}` namespace. For example, create the second grandchild namespace.
++
+[,console]
+----
+cat <<EOF | apoctl api create namespace -n $PARENT/$CHILD2 -f -
+name: $GRANDCHILD2
+type: Group
+defaultPUIncomingTrafficAction: Allow
+defaultPUOutgoingTrafficAction: Allow
+EOF
+----
+
+. Confirm the creation of the namespaces.
++
+[,console]
+----
+apoctl api list namespace -n $PARENT/$CHILD2 --output yaml
+----
+
+. Once the namespace structure is complete, you can deploy your enforcers.
