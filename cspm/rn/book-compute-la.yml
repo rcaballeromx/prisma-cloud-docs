@@ -1,0 +1,34 @@
+---
+kind: book
+title: Prisma™ Cloud Release Notes
+author: Prisma Cloud Tech Docs
+ditamap: prisma-cloud-release-notes
+dita: techdocs/en_US/dita/prisma/prisma-cloud/prisma-cloud-release-notes
+graphics: techdocs/en_US/dita/_graphics/uv/prisma/prisma-cloud/prisma-cloud-release-notes
+github:
+  owner: PaloAltoNetworks
+  repo: prisma-cloud-docs
+  bookdir: cspm/rn
+  branch: master
+---
+kind: chapter
+name: Prisma Cloud Compute Release Information
+dir: prisma-cloud-compute-release-information
+topics:
+  - name: Prisma Cloud Compute Release Information
+    file: prisma-cloud-compute-release-information.adoc
+  - name: Look Ahead—Planned Updates on Prisma Cloud Compute
+    file: look-ahead-planned-updates-prisma-cloud-compute.adoc
+  - name: Prisma Cloud Compute Known Issues
+    file: prisma-cloud-compute-known-issues.adoc
+---
+kind: chapter
+name: Get Help
+dir: get-help
+topics:
+  - name: Get Help
+    file: get-help.adoc
+  - name: Related Documentation
+    file: related-docs.adoc
+  - name: Request Support
+    file: request-support.adoc
